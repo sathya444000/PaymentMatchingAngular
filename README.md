@@ -84,7 +84,7 @@ Currency – varchar(200)
 Status  -  varchar(200)
 Resolved - bit
 ResolutionSide -  varchar(200)
-OrderId - int	
+OrderId - varchar(200)	
 	
 ________________________________________
 Running the Backend
