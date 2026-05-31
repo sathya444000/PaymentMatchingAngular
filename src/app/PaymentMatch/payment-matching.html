@@ -1,0 +1,116 @@
+<div class="toast-container" *ngIf="toastMessage">
+  <div class="toast" [ngClass]="toastType === 'success' ? 'toast-success' : 'toast-error'">
+    <span class="toast-icon">{{ toastType === 'success' ? '✓' : '⚠' }}</span>
+    <span class="toast-text">{{ toastMessage }}</span>
+    <button class="toast-close" (click)="closeToast()">✕</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Upload Section -->
+  <div class="upload-section">
+    <div class="file-card">
+      <label>System CSV File</label>
+      <input type="file" accept=".csv" #systemFileInput (change)="onSystemFileSelected($event)">
+    </div>
+
+    <div class="file-card">
+      <label>Provider CSV File</label>
+      <input type="file" accept=".csv" #providerFileInput (change)="onProviderFileSelected($event)">
+    </div>
+  </div>
+
+  <!-- Upload Button -->
+  <div class="action-buttons">
+    <button class="btn btn-upload" (click)="uploadFiles()">Upload & Compare</button>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-container" *ngIf="paymentMatchingList.length > 0">
+    <div class="summary-card matched">
+      <span class="count">{{ match }}</span>
+      <span class="title">Matched</span>
+    </div>
+    <div class="summary-card mismatch">
+      <span class="count">{{ mismatch }}</span>
+      <span class="title">Mismatch</span>
+    </div>
+    <div class="summary-card onlysystem">
+      <span class="count">{{ onlySys }}</span>
+      <span class="title">Only System</span>
+    </div>
+    <div class="summary-card onlyprovider">
+      <span class="count">{{ onlyPro }}</span>
+      <span class="title">Only Provider</span>
+    </div>
+  </div>
+
+  <!-- <div class="alert-msg" *ngIf="showMessage">
+    <span [ngStyle]="{'color': isError ? '#dc3545' : '#198754'}">
+      ⚠ {{ showMessage }}
+    </span>
+  </div> -->
+
+  <!-- Table -->
+  <div class="grid-section" *ngIf="paymentMatchingList.length > 0">
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>Order Id</th>
+          <th>Currency</th>
+          <th>System Amount</th>
+          <th>Provider Amount</th>
+          <th>Status</th>
+          <th>Resolved</th>
+          <th>Resolution Side</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of paymentMatchingList">
+          <td>{{ item.orderId }}</td>
+          <td>{{ item.currency }}</td>
+          <td>{{ item.systemAmount }}</td>
+          <td>{{ item.providerAmount }}</td>
+          <td>
+            <span [ngClass]="{
+              'matched':     item.status === 'MATCHED',
+              'mismatch':    item.status === 'AMOUNTMISMATCH',
+              'onlysystem':  item.status === 'ONLYSYSTEM',
+              'onlyprovider':item.status === 'ONLYPROVIDER'
+            }">
+              {{ item.status === 'MATCHED'         ? 'Matched' :
+                 item.status === 'AMOUNTMISMATCH'  ? 'Amount Mismatch' :
+                 item.status === 'ONLYSYSTEM'      ? 'Only In System' :
+                 item.status === 'ONLYPROVIDER'    ? 'Only In Provider' :
+                 item.status }}
+            </span>
+          </td>
+          <td>{{ item.resolved ? 'Yes' : 'No' }}</td>
+          <td>{{ item.resolutionSide }}</td>
+          <td class="action-cell">
+            <label *ngIf="item.status !== 'ONLYPROVIDER'">
+              <input type="radio" [disabled]="item.resolved"
+                [name]="'resolution_' + item.orderId"
+                value="SYSTEM" [(ngModel)]="item.resolutionSide">
+              Accept System
+            </label>
+            <label *ngIf="item.status !== 'ONLYSYSTEM'">
+              <input type="radio" [disabled]="item.resolved"
+                [name]="'resolution_' + item.orderId"
+                value="PROVIDER" [(ngModel)]="item.resolutionSide">
+              Accept Provider
+            </label>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-section" *ngIf="paymentMatchingList.length > 0">
+    <button class="btn btn-submit" (click)="submitData()">Submit</button>
+  </div>
+
+</div>
