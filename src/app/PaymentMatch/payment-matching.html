@@ -13,7 +13,6 @@
   </div>
 
 
-  <!-- Upload Section -->
   <div class="upload-section">
     <div class="file-card">
       <label>System CSV File</label>
@@ -26,12 +25,10 @@
     </div>
   </div>
 
-  <!-- Upload Button -->
   <div class="action-buttons">
     <button class="btn btn-upload" (click)="uploadFiles()">Upload & Compare</button>
   </div>
 
-  <!-- Summary Cards -->
   <div class="summary-container" *ngIf="paymentMatchingList.length > 0">
     <div class="summary-card matched">
       <span class="count">{{ match }}</span>
@@ -50,12 +47,6 @@
       <span class="title">Only Provider</span>
     </div>
   </div>
-
-  <!-- <div class="alert-msg" *ngIf="showMessage">
-    <span [ngStyle]="{'color': isError ? '#dc3545' : '#198754'}">
-      ⚠ {{ showMessage }}
-    </span>
-  </div> -->
   <div class="filter-section" *ngIf="paymentMatchingList.length > 0">
     <span class="filter-label">Filter by Resolved:</span>
     <div class="filter-buttons">
@@ -70,7 +61,6 @@
       </button>
     </div>
   </div>
-  <!-- Table -->
   <div class="grid-section" *ngIf="paymentMatchingList.length > 0">
     <table class="result-table">
       <thead>
@@ -107,7 +97,6 @@
           </td>
           <td>{{ item.Resolved ? 'Yes' : 'No' }}</td>
           <td>{{ item.ResolutionSide }}</td>
-          <!-- Line ~118 — both radio inputs -->
           <td class="action-cell">
             <label *ngIf="item.Status !== 'ONLYPROVIDER'">
               <input type="radio" [disabled]="!!item.Resolved" [name]="'resolution_' + item.OrderId" value="SYSTEM"
@@ -125,7 +114,6 @@
     </table>
   </div>
 
-  <!-- Submit -->
   <div class="submit-section" *ngIf="paymentMatchingList.length > 0">
     <button class="btn btn-submit" (click)="submitData()">Submit</button>
   </div>

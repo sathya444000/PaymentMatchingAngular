@@ -1,59 +1,139 @@
-# PaymentMatchingAngular
+Payments Matching Tool
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.10.
+Overview
+Payments Matching Tool is a full-stack web application built using Angular and ASP.NET Core that helps reconcile payment transactions between a system and provider.
+The application allows users to upload System and Provider CSV files, compare payment records, identify mismatches, resolve discrepancies, and store reconciliation results in a SQL Server database.
+________________________________________
+Technology Stack
+Frontend
+•	Angular 20
+•	TypeScript
+•	HTML5
+•	CSS
+Backend
+•	ASP.NET Core 8 Web API
+•	Entity Framework Core 8
+•	Swagger
+Database
+•	SQL Server
+Cloud & DevOps
+•	Azure SQL Database
+•	Azure Key Vault
+•	Azure Blob Storage
+•	GitHub
+________________________________________
+Features Implemented
+Payment Matching
+•	Able to view all payment records initially.
+•	User can upload both System CSV and Provider CSV files.
+•	Validation is implemented to ensure both files are selected before upload.
+•	Appropriate error messages are displayed when required files are not provided.
+Matching Process
+•	Payment records are matched using: OrderId + Currency
+•	Matching results are categorized into:
+  o	MATCHED
+  o	ONLYSYSTEM
+  o	ONLYPROVIDER
+  o	AMOUNTMISMATCH
+•	Successfully matched records are stored directly in the database.
+•	Unresolved records are displayed in the grid for user review and action.
+•	User can select:
+  o	Accept System
+  o	Accept Provider
+•	Resolution side is updated immediately on the UI.
+•	User can submit the reconciliation only after all unresolved records are resolved.
+•	Upon submission, all payment matching records are persisted to the database.
+Grid & Filtering
+•	Display all payment records in a tabular format.
+•	Summary dashboard showing:
+  o	Matched Count
+  o	Amount Mismatch Count
+  o	Only System Count
+  o	Only Provider Count
+•	Filter functionality available for:
+  o	All Records
+  o	Resolved Records
+  o	Unresolved Records
+User Experience
+•	Success messages displayed for successful operations.
+•	Error messages displayed for validation failures and processing errors.
+Logging & Monitoring
+•	Application logging is implemented using Serilog.
+•	Logs are stored in Azure Blob Storage for centralized monitoring and troubleshooting.
+Security
+•	Sensitive connection strings and secrets are stored securely in Azure Key Vault.
+•	Application retrieves secrets using Managed Identity and Azure Key Vault integration.
+Exception Handling
+•	Global Exception Handling Middleware is implemented.
+•	All unhandled exceptions are captured and logged.
+•	Standardized error responses are returned to the client.
+API Documentation
+•	Swagger is enabled for API testing and documentation.
+Database
+•	SQL Server database used for storing payment reconciliation records.
+•	Entity Framework Core used for data access and persistence.
 
-## Development server
+________________________________________
+Database Schema
+PAYMENTMATCHING
 
-To start a local development server, run:
-
-```bash
+ID - int Primary Key
+SystemAmount - decimal
+ProviderAmount  - decimal
+Currency – varchar(200)
+Status  -  varchar(200)
+Resolved - bit
+ResolutionSide -  varchar(200)
+OrderId - int	
+	
+________________________________________
+Running the Backend
+Prerequisites
+•	.NET 8 SDK
+•	SQL Server
+Restore Packages
+dotnet restore
+Run Application
+dotnet run
+Swagger URL: https://localhost:7026/swagger
+________________________________________
+Running the Frontend
+Prerequisites
+•	Node.js
+•	Angular CLI
+Install Packages
+npm install
+Run Angular Application
 ng serve
-```
+Application URL:  http://localhost:4200
+________________________________________
+Screenshots
+Payment Matching
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## Code scaffolding
+![File Save](ScreenShots/File-Saved.png)
+![Upload File](ScreenShots/upload-image.png)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Swagger UI
 
-```bash
-ng generate component component-name
-```
+![Swagger Api](ScreenShots/swagger.png)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+________________________________________
+Sample CSV Files
 
-```bash
-ng generate --help
-```
+Valid CSV
 
-## Building
+![Swagger Api](ScreenShots/SampleProvider.csv)
+![Swagger Api](ScreenShots/SampleSystem.csv)
 
-To build the project run:
+Invalid CSV with Wrong Header
 
-```bash
-ng build
-```
+![Invalid CSV](ScreenShots/SampleInvalidFile.csv)
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+________________________________________
+Author
+Sathya M
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+GitHub Repository:
+•	Angular Project: https://github.com/sathya444000/PaymentMatchingAngular.git
+•	Backend API: https://github.com/sathya444000/PaymentMatchingAPI.git
