@@ -1,7 +1,7 @@
 export class PaymentMatching {
     constructor() {
     }
-    OrderId?: number;
+    OrderId?: string;
     SystemAmount?: number;
     ProviderAmount?: string
     Currency?: string
