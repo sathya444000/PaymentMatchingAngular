@@ -6,7 +6,7 @@ export class PaymentMatching {
     ProviderAmount?: string
     Currency?: string
     Status?: string
-    Resolved?: boolean
+    Resolved: boolean=false
     ResolutionSide?: string
     Actions?: string
 }

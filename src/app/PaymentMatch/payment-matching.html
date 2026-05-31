@@ -7,6 +7,11 @@
 </div>
 
 <div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Payment Matching</h1>
+    <p class="page-subtitle">Upload and compare system vs provider CSV files</p>
+  </div>
+
 
   <!-- Upload Section -->
   <div class="upload-section">
@@ -51,7 +56,20 @@
       ⚠ {{ showMessage }}
     </span>
   </div> -->
-
+  <div class="filter-section" *ngIf="paymentMatchingList.length > 0">
+    <span class="filter-label">Filter by Resolved:</span>
+    <div class="filter-buttons">
+      <button class="filter-btn" [ngClass]="{'active': selectedFilter === 'ALL'}" (click)="filterRecords('ALL')">
+        All <span class="badge">{{ paymentMatchingList.length }}</span>
+      </button>
+      <button class="filter-btn yes" [ngClass]="{'active': selectedFilter === 'YES'}" (click)="filterRecords('YES')">
+        Resolved <span class="badge">{{ resolvedCount }}</span>
+      </button>
+      <button class="filter-btn no" [ngClass]="{'active': selectedFilter === 'NO'}" (click)="filterRecords('NO')">
+        Unresolved <span class="badge">{{ unresolvedCount }}</span>
+      </button>
+    </div>
+  </div>
   <!-- Table -->
   <div class="grid-section" *ngIf="paymentMatchingList.length > 0">
     <table class="result-table">
@@ -68,38 +86,37 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of paymentMatchingList">
-          <td>{{ item.orderId }}</td>
-          <td>{{ item.currency }}</td>
-          <td>{{ item.systemAmount }}</td>
-          <td>{{ item.providerAmount }}</td>
+        <tr *ngFor="let item of filteredList">
+          <td>{{ item.OrderId }}</td>
+          <td>{{ item.Currency }}</td>
+          <td>{{ item.SystemAmount }}</td>
+          <td>{{ item.ProviderAmount }}</td>
           <td>
             <span [ngClass]="{
-              'matched':     item.status === 'MATCHED',
-              'mismatch':    item.status === 'AMOUNTMISMATCH',
-              'onlysystem':  item.status === 'ONLYSYSTEM',
-              'onlyprovider':item.status === 'ONLYPROVIDER'
+              'matched':     item.Status === 'MATCHED',
+              'mismatch':    item.Status === 'AMOUNTMISMATCH',
+              'onlysystem':  item.Status === 'ONLYSYSTEM',
+              'onlyprovider':item.Status === 'ONLYPROVIDER'
             }">
-              {{ item.status === 'MATCHED'         ? 'Matched' :
-                 item.status === 'AMOUNTMISMATCH'  ? 'Amount Mismatch' :
-                 item.status === 'ONLYSYSTEM'      ? 'Only In System' :
-                 item.status === 'ONLYPROVIDER'    ? 'Only In Provider' :
-                 item.status }}
+              {{ item.Status === 'MATCHED' ? 'Matched' :
+              item.Status === 'AMOUNTMISMATCH' ? 'Amount Mismatch' :
+              item.Status === 'ONLYSYSTEM' ? 'Only In System' :
+              item.Status === 'ONLYPROVIDER' ? 'Only In Provider' :
+              item.Status }}
             </span>
           </td>
-          <td>{{ item.resolved ? 'Yes' : 'No' }}</td>
-          <td>{{ item.resolutionSide }}</td>
+          <td>{{ item.Resolved ? 'Yes' : 'No' }}</td>
+          <td>{{ item.ResolutionSide }}</td>
+          <!-- Line ~118 — both radio inputs -->
           <td class="action-cell">
-            <label *ngIf="item.status !== 'ONLYPROVIDER'">
-              <input type="radio" [disabled]="item.resolved"
-                [name]="'resolution_' + item.orderId"
-                value="SYSTEM" [(ngModel)]="item.resolutionSide">
+            <label *ngIf="item.Status !== 'ONLYPROVIDER'">
+              <input type="radio" [disabled]="!!item.Resolved" [name]="'resolution_' + item.OrderId" value="SYSTEM"
+                [(ngModel)]="item.ResolutionSide">
               Accept System
             </label>
-            <label *ngIf="item.status !== 'ONLYSYSTEM'">
-              <input type="radio" [disabled]="item.resolved"
-                [name]="'resolution_' + item.orderId"
-                value="PROVIDER" [(ngModel)]="item.resolutionSide">
+            <label *ngIf="item.Status !== 'ONLYSYSTEM'">
+              <input type="radio" [disabled]="!!item.Resolved" [name]="'resolution_' + item.OrderId" value="PROVIDER"
+                [(ngModel)]="item.ResolutionSide">
               Accept Provider
             </label>
           </td>

@@ -23,7 +23,7 @@ export class PaymentMatchingComponent {
   systemFile: File | null = null;
   providerFile: File | null = null;
   gridData: PaymentMatching[] = []
-  paymentMatchingList: any[] = [];
+  paymentMatchingList: PaymentMatching[] = [];
   systemFileError: boolean = false;
   providerFileError: boolean = false;
   showMessage: string = '';
@@ -34,7 +34,8 @@ export class PaymentMatchingComponent {
   onlyPro: number = 0
   isError: boolean = false;
   isGetList: boolean = false;
-
+ selectedFilter: 'ALL' | 'YES' | 'NO' = 'ALL';
+ filteredList: PaymentMatching[] = [];
   @ViewChild('systemFileInput') systemFileInput!: ElementRef;
 
   @ViewChild('providerFileInput') providerFileInput!: ElementRef;
@@ -88,11 +89,14 @@ export class PaymentMatchingComponent {
           this.paymentMatchingList = data.result;
           let resolve: boolean = true;
           this.paymentMatchingList.forEach(x => {
-            if (x.resolved == false) {
+            if (x.Resolved == false) {
               resolve = false;
               return;
             }
+            
           })
+
+          this.filterRecords('ALL')
           if (!resolve) {
             this.isError = true;
             this.toastType='error'
@@ -118,10 +122,10 @@ export class PaymentMatchingComponent {
 
   submitData() {
     this.toastMessage = '';
-    let gridData = this.paymentMatchingList.filter(x => !x.resolved);
+    let gridData = this.paymentMatchingList.filter(x => !x.Resolved);
     if (gridData.length) {
-      if (this.paymentMatchingList.find(x => !x.resolutionSide)) {
-        let data = this.paymentMatchingList.filter(x => !x.resolutionSide && !x.resolved).map(x => x.orderId).join(',')
+      if (this.paymentMatchingList.find(x => !x.ResolutionSide)) {
+        let data = this.paymentMatchingList.filter(x => !x.ResolutionSide && !x.Resolved).map(x => x.OrderId).join(',')
         this.toastType = "error";
         this.toastMessage = 'Some records are not resolved. Please resolve and submit. Order Id ' + data;
         return
@@ -129,7 +133,7 @@ export class PaymentMatchingComponent {
         this.toastMessage = '';
       }
       this.paymentMatchingList.forEach(x => {
-        x.resolved = x.resolutionSide ? true : false
+        x.Resolved = x.ResolutionSide ? true : false
       })
       this._PaymentService.submitData(
         this.paymentMatchingList
@@ -161,6 +165,7 @@ export class PaymentMatchingComponent {
       .subscribe({
         next: (data) => {
           this.paymentMatchingList = data.result;
+          this.filterRecords('ALL')
           this.getSummary();
           this.cdr.detectChanges();
         },
@@ -176,13 +181,36 @@ export class PaymentMatchingComponent {
 
 
   getSummary() {
-    this.match = this.paymentMatchingList.filter(x => x.status == "MATCHED").length
-    this.onlySys = this.paymentMatchingList.filter(x => x.status == "ONLYSYSTEM").length
-    this.onlyPro = this.paymentMatchingList.filter(x => x.status == "ONLYPROVIDER").length
-    this.mismatch = this.paymentMatchingList.filter(x => x.status == "AMOUNTMISMATCH").length
+    this.match = this.paymentMatchingList.filter(x => x.Status == "MATCHED").length
+    this.onlySys = this.paymentMatchingList.filter(x => x.Status == "ONLYSYSTEM").length
+    this.onlyPro = this.paymentMatchingList.filter(x => x.Status == "ONLYPROVIDER").length
+    this.mismatch = this.paymentMatchingList.filter(x => x.Status == "AMOUNTMISMATCH").length
   }
 
   closeToast() {
     this.toastMessage = "";
   }
+
+  get resolvedCount(): number {
+  return this.paymentMatchingList.filter(x => x.Resolved).length;
+}
+
+get unresolvedCount(): number {
+  return this.paymentMatchingList.filter(x => !x.Resolved).length;
+}
+
+filterRecords(filter: 'ALL' | 'YES' | 'NO') {
+  this.selectedFilter = filter;
+
+  switch (filter) {
+    case 'YES':
+      this.filteredList = this.paymentMatchingList.filter(x => x.Resolved);
+      break;
+    case 'NO':
+      this.filteredList = this.paymentMatchingList.filter(x => !x.Resolved);
+      break;
+    default:
+      this.filteredList = [...this.paymentMatchingList];
+  }
+}
 }
